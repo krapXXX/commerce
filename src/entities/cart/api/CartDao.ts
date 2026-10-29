@@ -1,7 +1,50 @@
+import GlobalState from "../../../features/global_state/GlobalState";
 import BaseDao from "../../config/BaseDao";
 import type CartType from "../model/CartType";
 
-export default class CartDao {
+export default class CartDao {    
+    static #cartKey = "cart-231";
+    static #cartDefault:CartType = {cartItems:[], price: 0};
+
+    static save(cart:CartType) {
+        window.localStorage.setItem(CartDao.#cartKey, JSON.stringify(cart));
+    }
+
+    static restoreSaved():CartType {
+        const data = window.localStorage.getItem(CartDao.#cartKey);
+        if(data) {
+            try {
+                return JSON.parse( data );
+            }
+            catch(err) {
+                console.error("Cart restore error:", err);
+            }
+        }
+        return CartDao.#cartDefault;
+    }
+    static loadHistory():Promise<Array<CartType>> {
+        return new Promise((resolve, reject) => {
+            fetch("http://localhost:8080/java231web/cart/history", {
+                headers: {
+                    "Authorization": "Bearer " + GlobalState.token
+                }
+            })
+            .then(r => { 
+                if(r.ok) {
+                    return r.json();
+                }
+                reject(r.status);
+            })
+            .then(j => {
+                // console.log(j)
+                resolve(j.data);
+            })
+            .catch(reject);
+        });
+    };
+}
+/*
+class CartDaoAsp {
     static #cartKey = "cart-231";
     static #cartDefault:CartType = {cartItems:[], price: 0};
 
@@ -95,3 +138,4 @@ export default class CartDao {
         cart.price = total;
     }
 }
+    */

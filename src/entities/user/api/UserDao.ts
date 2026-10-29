@@ -41,11 +41,10 @@ export default class UserDao {
                     "Authorization": "Basic " + Base64.encode(`${login}:${password}`)
                 }
             })
-            .then(r => r.text())
+            .then(r => r.json())
             .then(j => {
-                console.log(j);
-                
-                resolve(null);
+                console.log(j);                
+                resolve(j);
             })
             .catch(reject);
         });
