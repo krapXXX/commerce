@@ -1,9 +1,59 @@
+<<<<<<< HEAD
 //import BaseDao from "../../config/BaseDao";
 import GlobalState from "../../../features/global_state/GlobalState";
 import type CartType from "../model/CartType";
 
 
 export default class CartDao {
+=======
+import GlobalState from "../../../features/global_state/GlobalState";
+import BaseDao from "../../config/BaseDao";
+import type CartType from "../model/CartType";
+
+export default class CartDao {    
+    static #cartKey = "cart-231";
+    static #cartDefault:CartType = {cartItems:[], price: 0};
+
+    static save(cart:CartType) {
+        window.localStorage.setItem(CartDao.#cartKey, JSON.stringify(cart));
+    }
+
+    static restoreSaved():CartType {
+        const data = window.localStorage.getItem(CartDao.#cartKey);
+        if(data) {
+            try {
+                return JSON.parse( data );
+            }
+            catch(err) {
+                console.error("Cart restore error:", err);
+            }
+        }
+        return CartDao.#cartDefault;
+    }
+    static loadHistory():Promise<Array<CartType>> {
+        return new Promise((resolve, reject) => {
+            fetch("http://localhost:8080/java231web/cart/history", {
+                headers: {
+                    "Authorization": "Bearer " + GlobalState.token
+                }
+            })
+            .then(r => { 
+                if(r.ok) {
+                    return r.json();
+                }
+                reject(r.status);
+            })
+            .then(j => {
+                // console.log(j)
+                resolve(j.data);
+            })
+            .catch(reject);
+        });
+    };
+}
+/*
+class CartDaoAsp {
+>>>>>>> f4e5b0c4bc5656fa6abf43fb2562aa1359c622a2
     static #cartKey = "cart-231";
     static #cartDefault:CartType = {cartItems:[], price: 0};
 
@@ -140,4 +190,9 @@ export default class CartDao {
         }
         cart.price = total;
     }
+<<<<<<< HEAD
 }*/
+=======
+}
+    */
+>>>>>>> f4e5b0c4bc5656fa6abf43fb2562aa1359c622a2
