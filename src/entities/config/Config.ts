@@ -1,5 +1,6 @@
 const Config = {
-    backendUrl: "https://localhost:7015",
+    backendUrl: "http://localhost:8080/java231web/",
+    
 };
 
 export default Config;

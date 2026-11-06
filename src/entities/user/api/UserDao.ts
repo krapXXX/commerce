@@ -33,23 +33,34 @@ export default class UserDao {
     }    
     
     
-    static authenticate(login:string, password:string) : Promise<UserType|null> {
-        return new Promise((resolve, reject) => {
-            fetch(`http://localhost:8080/java231web/user`, {
-                method: "GET",
-                headers: {
-                    "Authorization": "Basic " + Base64.encode(`${login}:${password}`)
-                }
-            })
-            .then(r => r.text())
-            .then(j => {
-                console.log(j);
-                
-                resolve(null);
-            })
-            .catch(reject);
-        });
-    }
+    
+static authenticate(login: string, password: string): Promise<UserType | null> {
+    return new Promise((resolve, reject) => {
+        fetch(`http://localhost:8080/java231web/user`, {
+            method: "GET",
+            headers: {
+                "Authorization": "Basic " + Base64.encode(`${login}:${password}`)
+            }
+        })
+        .then(r => {
+            if (r.status === 401 || r.status === 403) {
+                return null;
+            }
+
+            if (!r.ok) {
+                throw new Error(`Authentication failed: ${r.status}`);
+            }
+
+            return r.json();
+        })
+        .then(j => {
+            console.log("AUTH RESPONSE:", j);
+            resolve(j as UserType | null);
+        })
+        .catch(reject);
+    });
+}
+
 
     static authenticateAsp(login:string, password:string) : Promise<UserType|null> {
         return new Promise((resolve, reject) => {

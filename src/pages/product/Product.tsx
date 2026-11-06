@@ -9,6 +9,7 @@ import type IRestResponse from "../../entities/_rest/model/IRestResponse";
 
 
 
+
 export default function Product() {
     const {setBusy, isBusy} = useContext(AppContext);
     const {slug} = useParams<string>();
@@ -34,32 +35,57 @@ export default function Product() {
     : isBusy ? <></>
     : pageData === null ? <h1>Not Found</h1>
     : <>
-    <div className="row"></div>
-    {pageData.product.versions.map(pv =>
-    <div className="row mb-3" key={pv.id}>
-        <div className="col col-5">
-            <img className="w-100" src={pv.imageUrl} alt={pageData?.product.title} />
-        </div>
-        <div className="col col-7 product-info">
-            <h1>{pageData?.product.title} {pv.titleAddon}</h1>            
-            <div>
-                <div className='product-rating'>★★★★★ ({pageData.product.rating})</div>
-                {pv.stock === 0
-                ? <div className="product-unavailable">Передзамовлення</div>
-                : pv.stock && pv.stock > 0 && pv.stock < 5
-                    ? <div className="product-low-stock">Залишилось мало</div>
-                    : <div className="product-available">У наявності</div>
-                }
-            </div>
-            <div className="product-old-price">{pv.price + (pageData?.product.discount ?? 0)}</div>
-            <div className="product-new-price">{pv.price}</div>
-        </div>    
-    </div>)}
+        {pageData.product.versions.length > 1 &&
+            <h1>{pageData.product.title}</h1>
+        }
 
-    <br/>
-    {/* <Recommended pageData={pageData} /> */}
+        {pageData.product.versions.map(pv =>
+            <div className="row mb-3" key={pv.id}>
+                <div className="col col-5">
+                    <img
+                        className="w-100"
+                        src={pv.imageUrl}
+                        alt={pageData.product.title}
+                    />
+                </div>
+
+                <div className="col col-7 product-info">
+                    <h1>
+                        {pageData.product.versions.length === 1
+                            ? `${pageData.product.title} ${pv.titleAddon ?? ""}`
+                            : pv.titleAddon
+                        }
+                    </h1>
+
+                    <div>
+                        <div className='product-rating'>
+                            ★★★★★ ({pageData.product.rating})
+                        </div>
+
+                        {pv.stock === 0
+                            ? <div className="product-unavailable">Передзамовлення</div>
+                            : pv.stock && pv.stock > 0 && pv.stock < 5
+                                ? <div className="product-low-stock">Залишилось мало</div>
+                                : <div className="product-available">У наявності</div>
+                        }
+                    </div>
+
+                    <div className="product-old-price">
+                        {pv.price + (pageData.product.discount ?? 0)}
+                    </div>
+
+                    <div className="product-new-price">
+                        {pv.price}
+                    </div>
+                </div>
+            </div>
+        )}
+
+        <br/>
+        {/* <Recommended pageData={pageData} /> */}
     </>;
 }
+
 
 function Recommended({pageData}:{pageData:ProductPageType}) {
     const scrollRightRef = useRef<HTMLDivElement>(null);

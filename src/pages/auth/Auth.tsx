@@ -135,8 +135,10 @@ function AuthForm() {
         setBusy(true);
         UserDao
             .authenticate(login, password)
-            .then(res => {
-                if(res == null) {
+           .then(res => {
+    console.log("AUTH RESULT:", res);
+
+    if(res == null) {
                     GlobalState.token = null;
                     alert("У вході відмовлено");
                 }
