@@ -1,3 +1,5 @@
+import type IProduct from "./IProduct";
+
 export default interface IProductVersion {
     id:                string,
     price:             number,
@@ -6,4 +8,5 @@ export default interface IProductVersion {
     descriptionAddon?: string,
     imageUrl:          string,
     slugAddon?:        string,
+    product?:          IProduct, 
 }

@@ -7,6 +7,8 @@ export default interface CartType {
     createDt?: string,
     deleteDt?: string|null,
     orderDt?: string|null,
+   // get isClosed():boolean{return (this.deleteDt??orderDt)!=null;},
+
 }
 
 /*

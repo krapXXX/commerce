@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-//import BaseDao from "../../config/BaseDao";
-import GlobalState from "../../../features/global_state/GlobalState";
-import type CartType from "../model/CartType";
-
-
-export default class CartDao {
-=======
 import GlobalState from "../../../features/global_state/GlobalState";
 import BaseDao from "../../config/BaseDao";
 import type CartType from "../model/CartType";
@@ -50,6 +42,35 @@ export default class CartDao {
             .catch(reject);
         });
     };
+     static loadOrderDetails(id:string):Promise<CartType> {
+        return new Promise((resolve, reject) => {
+              fetch("http://localhost:8080/java231web/cart/id/" +id, {
+                headers: {
+                    "Authorization": "Bearer " + "381548f8-b653-11f1-828e-62517600596c"// GlobalState.token
+                }})
+            .then(r => { 
+                if(r.ok) {
+                    return r.json();
+                }
+                reject(r.status);
+            })
+            .then(j => {
+                console.log("loadOrderDetails", j)
+                resolve(j.data);
+            })
+            .catch(reject);
+        });
+    }
+     static calcPrices(cart:CartType) {
+        let total = 0.0;
+        for(let ci of cart.cartItems) {
+            // if(ci.product.isInDiscount...)
+            ci.price = ci.productVersion.price * ci.quantity;
+            total += ci.price;
+        }
+        cart.price = total;
+    }
+
 }
 /*
 class CartDaoAsp {
@@ -95,7 +116,7 @@ class CartDaoAsp {
         }
         return CartDao.#cartDefault;
     }
-}
+}*/
 
 /*class CartDao {
     static #cartKey = "cart-231";
@@ -190,9 +211,4 @@ class CartDaoAsp {
         }
         cart.price = total;
     }
-<<<<<<< HEAD
-}*/
-=======
-}
-    */
->>>>>>> f4e5b0c4bc5656fa6abf43fb2562aa1359c622a2
+*/

@@ -6,6 +6,7 @@ import SiteButton from '../../features/buttons/SiteButton';
 import { useNavigate, useParams } from 'react-router-dom';
 import CartDao from '../../entities/cart/api/CartDao';
 import type CartType from '../../entities/cart/model/CartType';
+import OrderItemCard from './ui/OrderItemCard';
 
 export default function Cart() {
     const {cart, setCart, user, setUser, showModal} = useContext(AppContext);
@@ -24,35 +25,35 @@ export default function Cart() {
             });
         }
         else {
-            CartDao.order(cart)
-            .then(_ => {
-                showModal({
-                    title: "Кошик",
-                    message: "Замовлення створене",
-                });
-                setCart({
-                    price: 0.0,
-                    cartItems: []
-                });
-            })
-            .catch(err => {
-                if(typeof err == 'number' && err == 401) {
-                    setUser(null);
-                    showModal({
-                        title: "Кошик",
-                        message: "Авторизована сесія добігла кінця",
-                        buttons: [
-                            {title: "Увійти", callback: () => navigate('/auth')},
-                        ]
-                    });
-                }
-                else {
-                    showModal({
-                        title: "Кошик",
-                        message: "Виникла помилка, повторіть спробу пізніше",
-                    });
-                }
-            });
+            // CartDao.order(cart)
+            // .then(_ => {
+            //     showModal({
+            //         title: "Кошик",
+            //         message: "Замовлення створене",
+            //     });
+            //     setCart({
+            //         price: 0.0,
+            //         cartItems: []
+            //     });
+            // })
+            // .catch(err => {
+            //     if(typeof err == 'number' && err == 401) {
+            //         setUser(null);
+            //         showModal({
+            //             title: "Кошик",
+            //             message: "Авторизована сесія добігла кінця",
+            //             buttons: [
+            //                 {title: "Увійти", callback: () => navigate('/auth')},
+            //             ]
+            //         });
+            //     }
+            //     else {
+            //         showModal({
+            //             title: "Кошик",
+            //             message: "Виникла помилка, повторіть спробу пізніше",
+            //         });
+            //     }
+            // });
         }
     };
 
@@ -64,7 +65,11 @@ export default function Cart() {
         {cart.cartItems.reduce((s,ci) => s + ci.quantity, 0)} товарів &thinsp; 
         на суму {cart.cartItems.reduce((s,ci) => s + ci.price, 0)} грн
     </h1>
-    {cart.cartItems.map(cartItem => <CartItemCard key={cartItem.product.id} cartItem={cartItem} />)}
+  
+{cart.cartItems.map(cartItem => (cart.deleteDt ?? cart.orderDt)
+    ? <OrderItemCard key={cartItem.productVersionId} cartItem={cartItem} />
+    : <CartItemCard key={cartItem.productVersionId} cartItem={cartItem} />
+)}
 
     {cart.cartItems.length > 0 && <SiteButton text='Придбати' action={buyClick} />}
     </>;
@@ -83,11 +88,11 @@ function CartId({id}:{id:string}) {
         <h1 className="display-4">
             <i className="bi bi-cart"></i>&thinsp; 
             Замовлення від {new Date(order.orderDt ?? order.deleteDt ?? order.createDt!).pretty()} &thinsp; 
-            {order.cartItems.length} позицій &thinsp; 
-            {order.cartItems.reduce((s,ci) => s + ci.quantity, 0)} товарів &thinsp; 
-            на суму {order.cartItems.reduce((s,ci) => s + ci.price, 0)} грн
+            {order.cartItems?.length} позицій &thinsp; 
+            {order.cartItems?.reduce((s,ci) => s + ci.quantity, 0)} товарів &thinsp; 
+            на суму {order.cartItems?.reduce((s,ci) => s + ci.price, 0)} грн
         </h1>
-        {order.cartItems.map(cartItem => <CartItemCard key={cartItem.product.id} cartItem={cartItem} />)}
+        {order.cartItems?.map(cartItem => <CartItemCard key={cartItem.productVersionId} cartItem={cartItem} />)}
 
     </div>}
     </>;

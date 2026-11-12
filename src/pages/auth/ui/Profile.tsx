@@ -86,13 +86,13 @@ export default function Profile() {
 
         <div className="col col-4 offset-1 border" style={{minHeight:500}}>
             <h2 className="display-5">Історія замовлень</h2>
-            {history.map((cart,i) => { 
+            {history?.map((cart,i) => { 
                 const cnt = cart.cartItems.reduce((n, item) => n + item.quantity, 0);
                 return <Link to={"/cart/" + cart.id} key={cart.id ?? i}>
                     {cart.createDt && new Date(cart.createDt).pretty()}<br/>
                 Загальна сума: {cart.price}, {cnt} {"Товар".ending(cnt, "ів", "", "и")}
                 {cart.cartItems.map(ci => <p>
-                    {ci.product.title}
+                    {ci.productVersion.title}
                 </p>)}
             </Link>})}
         </div>
